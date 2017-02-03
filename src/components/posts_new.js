@@ -1,16 +1,33 @@
-import React,{Component} from 'react';
+import React,{Component,PropTypes} from 'react';
 import { Field, reduxForm } from 'redux-form';
 import {createPosts} from '../actions/index';
 import {Link} from 'react-router';
 
  class PostsNew extends Component{
+
+   static contextTypes = {                        //use context only in case  router
+
+     router:PropTypes.object                      //router is available throughtout the application
+                                                   //but is accessible through the  parent.
+   }
+
+   onSubmit(props){
+
+     this.props.createPosts(props).then(()=>{           //our action createPosts returns a promise
+    //when promise is resolved ie blog post is created navigate to index
+     this.context.router.push('/');
+
+   });
+
+   }
+
+
   render(){
 
     const {fields:{title,categories,content},handleSubmit} = this.props;
 
-
     return(
-      <form onSubmit={handleSubmit(this.props.createPosts)}>
+      <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
         <h3>Create a New Post</h3>
         <br />
         <div className={`form-group ${ title.touched && title.invalid ?'has-danger':''}`}>
